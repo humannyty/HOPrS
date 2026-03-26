@@ -1,58 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <meta charset="UTF-8">
-    <title>HOPrS QuadTrees List</title>
-    <style>
-        /* CSS for alternating row colors */
-        .even-row {
-            background-color: #f2f2f2; /* Light gray */
-        }
-        .odd-row {
-            background-color: #ffffff; /* White */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DB Management — HOPrS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>List of QuadTrees</h1>
+
+{% set active = 'quadtrees' %}
+{% include '_nav.html' %}
+
+<div class="page-wide">
+  <div class="page-header mt-6">
+    <h1>Quadtree Management</h1>
+    <p>View, download, or delete stored quadtrees from the database.</p>
+  </div>
+
+  <div class="table-wrapper">
     <table>
-        <thead>
-            <tr>
-                <th>QuadTree Reference</th>
-                <th>Record Count</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for qt_ref, count in qt_refs_with_counts %}
-            {% set row_class = 'even-row' if loop.index is even else 'odd-row' %}
-            <tr class="{{ row_class }}">
-                <td>{{ qt_ref }}</td>
-                <td>{{ count }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('quadtrees_bp.delete_quadtrees', qt_ref=qt_ref) }}">
-                        <button type="submit">Delete</button>
-                    </form>
-                    <form method="GET" action="{{ url_for('quadtrees_bp.download_csv', qt_ref=qt_ref) }}">
-                        <button type="submit">Download CSV</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div>
-        <a href="{{ url_for('quadtrees_bp.list_quadtrees', page=page-1, per_page=per_page) }}" {% if page == 1 %}class="disabled"{% endif %}>Previous</a>
-        <a href="{{ url_for('quadtrees_bp.list_quadtrees', page=page+1, per_page=per_page) }}">Next</a>
-    </div>
-    <table border=1>
+      <thead>
         <tr>
-            <td><a href="/">Encode files</a></td>
-            <td><a href="compare">Compare </a></td>
-            <td><a href="search">DB Search </a></td>
-            <td><a href="quadtrees">DB QuadTree management</a></td>
+          <th>Quadtree Reference</th>
+          <th>Record Count</th>
+          <th>Actions</th>
         </tr>
+      </thead>
+      <tbody>
+        {% for qt_ref, count in qt_refs_with_counts %}
+        <tr>
+          <td>{{ qt_ref }}</td>
+          <td><span class="badge">{{ count }}</span></td>
+          <td>
+            <div class="td-actions">
+              <form method="GET" action="{{ url_for('quadtrees_bp.download_csv', qt_ref=qt_ref) }}" style="margin:0;">
+                <button type="submit" class="btn btn-ghost btn-sm">Download CSV</button>
+              </form>
+              <form method="POST" action="{{ url_for('quadtrees_bp.delete_quadtrees', qt_ref=qt_ref) }}" style="margin:0;">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
+
+  <div class="pagination">
+    <a href="{{ url_for('quadtrees_bp.list_quadtrees', page=page-1, per_page=per_page) }}"
+       {% if page == 1 %}class="disabled"{% endif %}>← Previous</a>
+    <a href="{{ url_for('quadtrees_bp.list_quadtrees', page=page+1, per_page=per_page) }}">Next →</a>
+  </div>
+</div>
+
 </body>
 </html>

@@ -1,37 +1,45 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOPrS DB Search</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DB Search — HOPrS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Search in DB</h1>
-    <p>This page will allow you to find an image in a database and show nearest matches. </p>
-    <form id="compare-form" action="/search" method="post" enctype="multipart/form-data">
-    
 
-        <label for="new_image">Choose new image file to search for:</label>
-        <input type="file" id="new_image" name="new_image" required><br><br>
+{% set active = 'search' %}
+{% include '_nav.html' %}
 
-        <label for="threshold">Threshold:</label>
-        <input type="number" id="threshold" name="threshold" value="2" required><br><br>
+<div class="page">
+  <div class="page-header">
+    <h1>Database Search</h1>
+    <p>Find an image in the database and surface the nearest matches.</p>
+  </div>
 
-        <label for="compare_depth">Compare Depth:</label>
-        <input type="number" id="compare_depth" name="compare_depth" value="5" required><br><br>
+  <div class="card">
+    <form id="search-form" action="/search" method="post" enctype="multipart/form-data">
 
-        <button type="submit">Search</button>
+      <div class="form-group">
+        <label for="new_image">Image to Search For</label>
+        <input type="file" id="new_image" name="new_image" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="threshold">Threshold</label>
+          <input type="number" id="threshold" name="threshold" value="2" required>
+        </div>
+        <div class="form-group">
+          <label for="compare_depth">Compare Depth</label>
+          <input type="number" id="compare_depth" name="compare_depth" value="5" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Search</button>
     </form>
-    <table border=1>
-        <tr>
-            <td><a href="/">Encode files</a></td>
-            <td><a href="compare">Compare </a></td>
-            <td><a href="search">DB Search </a></td>
-            <td><a href="quadtrees">DB QuadTree management</a></td>
-        </tr>
-    </table>
+  </div>
+</div>
+
 </body>
 </html>
-

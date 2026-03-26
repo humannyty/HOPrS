@@ -1,7 +1,7 @@
 from flask import Flask
 import os
 import logging
-from routes import index_bp, compare_bp, upload_bp, search_bp, quadtrees_bp
+from routes import index_bp, compare_bp, upload_bp, search_bp, quadtrees_bp, sidebyside_bp
 from logging.handlers import RotatingFileHandler
 
 
@@ -62,6 +62,7 @@ print("compare_bp registered in main")
 app.register_blueprint(upload_bp)
 app.register_blueprint(search_bp)
 app.register_blueprint(quadtrees_bp)
+app.register_blueprint(sidebyside_bp)
 print("all blueprints registered in main")
 
 if __name__ == "__main__":

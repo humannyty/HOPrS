@@ -1,110 +1,77 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOPrS Comparison Result</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            display: none;
-        }
-        .active {
-            display: block;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .stats {
-            list-style: none;
-            padding: 0;
-        }
-        .stats li {
-            margin: 5px 0;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .buttons {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .buttons button {
-            margin: 0 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .file-list {
-            margin-top: 20px;
-        }
-        .file-list ul {
-            list-style: none;
-            padding: 0;
-        }
-        .file-list li {
-            margin: 5px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Result — HOPrS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Comparison Result</h1>
-        <div class="buttons">
-            <button onclick="showImage('highlight')">Highlighted Image</button>
-            <button onclick="showImage('comparison')">Comparison Image</button>
-            <button onclick="showImage('new')">New Image</button>
-            <button onclick="showImage('difference')">Difference Mask</button>
-        </div>
-        <h2>Images</h2>
-        <img id="highlight" src="{{ highlight_image }}" alt="Highlighted Image" class="active">
-        <img id="comparison" src="{{ comparison_image }}" alt="Comparison Image">
-        <img id="new" src="{{ new_image }}" alt="New Image">
-        <img id="difference" src="{{ difference_mask }}" alt="Difference Mask">
-        <h2>Statistics</h2>
-        <ul class="stats">
-            <li>Matched Pixels: {{ stats.matched_pixels }}</li>
-            <li>Total Pixels: {{ stats.total_pixels }}</li>
-            <li>Proportion: {{ stats.proportion }}</li>
-        </ul>
-        <a href="/" class="back-link">Go Back</a>
-        <div class="file-list">
-            <h2>Output Files</h2>
-            <ul>
-                {% for file in files %}
-                <li>{{ file }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+
+{% include '_nav.html' %}
+
+<div class="page-wide">
+  <div class="page-header mt-6">
+    <h1>Comparison Result</h1>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Matched Pixels</div>
+      <div class="stat-value">{{ stats.matched_pixels }}</div>
     </div>
-    <script>
-        function showImage(id) {
-            const images = document.querySelectorAll('img');
-            images.forEach(image => {
-                image.classList.remove('active');
-            });
-            document.getElementById(id).classList.add('active');
-        }
-    </script>
-    <table border=1>
-        <tr>
-            <td><a href="/">Encode files</a></td>
-            <td><a href="compare">Compare </a></td>
-            <td><a href="search">DB Search </a></td>
-            <td><a href="quadtrees">DB QuadTree management</a></td>
-        </tr>
-    </table>
+    <div class="stat-card">
+      <div class="stat-label">Total Pixels</div>
+      <div class="stat-value">{{ stats.total_pixels }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Proportion</div>
+      <div class="stat-value">{{ stats.proportion }}</div>
+    </div>
+  </div>
+
+  <!-- Image viewer -->
+  <div class="card">
+    <div class="card-title">Output Images</div>
+    <div class="image-tabs">
+      <button class="image-tab active" onclick="showImage('highlight',   this)">Highlighted</button>
+      <button class="image-tab"        onclick="showImage('comparison',  this)">Comparison</button>
+      <button class="image-tab"        onclick="showImage('new',         this)">New Image</button>
+      <button class="image-tab"        onclick="showImage('difference',  this)">Difference Mask</button>
+    </div>
+    <div class="image-frame">
+      <img id="highlight"  src="{{ highlight_image }}"  alt="Highlighted Image"  class="active">
+      <img id="comparison" src="{{ comparison_image }}" alt="Comparison Image">
+      <img id="new"        src="{{ new_image }}"        alt="New Image">
+      <img id="difference" src="{{ difference_mask }}"  alt="Difference Mask">
+    </div>
+  </div>
+
+  <!-- Output files -->
+  {% if files %}
+  <div class="card mt-4">
+    <div class="card-title">Output Files</div>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+      {% for file in files %}
+      <li class="text-muted">{{ file }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="mt-6">
+    <a href="/" class="btn btn-ghost btn-sm">← Back</a>
+  </div>
+</div>
+
+<script>
+  function showImage(id, btn) {
+    document.querySelectorAll('.image-frame img').forEach(img => img.classList.remove('active'));
+    document.querySelectorAll('.image-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
 </body>
 </html>

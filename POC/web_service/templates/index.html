@@ -1,59 +1,75 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOPrS Image Encoder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encode — HOPrS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+
+{% set active = 'encode' %}
+{% include '_nav.html' %}
+
+<div class="page">
+  <div class="page-header">
     <h1>Image Encoder</h1>
+    <p>Upload an image to generate and store its quadtree fingerprint.</p>
+  </div>
+
+  <div class="card">
     <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-        <label for="file">Choose image file:</label>
-        <input type="file" id="file" name="file" required><br><br>
 
-        <label for="depth">Quad Tree Depth:</label>
-        <input type="number" id="depth" name="depth" value="5" required><br><br>
+      <div class="form-group">
+        <label for="file">Image File</label>
+        <input type="file" id="file" name="file" required>
+      </div>
 
-        <label for="algorithm">Hash Algorithm:</label>
-        <select id="algorithm" name="algorithm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="depth">Quadtree Depth</label>
+          <input type="number" id="depth" name="depth" value="5" required>
+        </div>
+        <div class="form-group">
+          <label for="algorithm">Hash Algorithm</label>
+          <select id="algorithm" name="algorithm">
             <option value="pdq">PDQ</option>
-            <option value="phash">pHash</option>
-            <option value="ahash">aHash</option>
-            <option value="dhash">dHash</option>
-        </select><br><br>
+          </select>
+        </div>
+      </div>
 
-        <label for="resize">Resize (width,height):</label>
-        <input type="text" id="resize" name="resize"><br><br>
+      <div class="form-divider"></div>
+      <div class="form-section-label">Optional Parameters</div>
 
-        <label for="crop">Crop (x0,y0,x1,y1):</label>
-        <input type="text" id="crop" name="crop"><br><br>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="resize">Resize</label>
+          <input type="text" id="resize" name="resize" placeholder="width,height">
+        </div>
+        <div class="form-group">
+          <label for="crop">Crop</label>
+          <input type="text" id="crop" name="crop" placeholder="x0,y0,x1,y1">
+        </div>
+      </div>
 
-        <label for="note">Note:</label>
-        <input type="text" id="note" name="note"><br><br>
+      <div class="form-group">
+        <label for="note">Note</label>
+        <input type="text" id="note" name="note" placeholder="Optional label for this entry">
+      </div>
 
-        <button type="submit">Upload and Encode</button>
+      <button type="submit" class="btn btn-primary">Upload &amp; Encode</button>
     </form>
+  </div>
+</div>
 
-<table border=1>
-    <tr>
-        <td><a href="/">Encode files</a></td>
-        <td><a href="compare">Compare </a></td>
-        <td><a href="search">DB Search </a></td>
-        <td><a href="quadtrees">DB QuadTree management</a></td>
-    </tr>
-</table>
-
-    <script>
-        document.getElementById('upload-form').onsubmit = function() {
-            const fileInput = document.getElementById('file');
-            if (fileInput.files.length === 0) {
-                alert("Please choose a file to upload.");
-                return false;
-            }
-            return true;
-        }
-    </script>
+<script>
+  document.getElementById('upload-form').onsubmit = function () {
+    if (document.getElementById('file').files.length === 0) {
+      alert('Please choose a file to upload.');
+      return false;
+    }
+    return true;
+  };
+</script>
 </body>
 </html>
-
