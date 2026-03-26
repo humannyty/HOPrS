@@ -1,10 +1,90 @@
-# HOPrS
-Human Orientated Proof Standard (HOPrS).  A collaboratively developed open standard for proving the originality and modifications that have been done to photographic and video media.  
+# HOPrS — Human Oriented Proof System
 
-This repository is a working one for the development of the standard containing tools, schemas, documentation and examples.  
+An open system for proving the originality of, and modifications made to, photographic and video media. HOPrS uses a combination of Merkle trees, QuadTrees, and Perceptual hashing (MQP) to fingerprint images at multiple levels of granularity — making it possible to detect, localise, and characterise edits even across crops, resizes, and partial modifications.
 
-Examples folder was an early (now abandoned) approach that looked at a series of records detailing what had been done. Each change was mapped to a previous one and hte concept at that time was that we'd have a limited number of allowable transforms that could map to a GIMP plugin.  These plugins would be computationally reversable. This would of course limit the editor to only being able to perform approved actions that were sanctioned by HOP(r)S and had the plugin provided.  This was felt to be overly restrictive.  
+This repository contains the standard specification, tooling, schemas, documentation, and a working web-based POC.
 
-The POC folder is an exploration of the MQP (Merkle, QuadTree & Perceptual hash) idea as was presented at the HOPrS workshop March 2024, Cambridge University.  This doesn't Merkelise at this time but does process and match images in terms of quad tree segments.  Recommendations for getting started would be to use a PNG original image, perform modification to it.  Then use the encode_all.sh to crate suitable quad trees and then compare these with iterative_comparison.  The odd case out is cropping and that will require that you map the end image into the original, command lina parameters are given for that.  Algorithmic efficiency, code quality and efficient storage have not been considerations at this time and there are straightforward orders of magnitude improvements to easily make (your contributions welcomed!).  Suggested values to get you started are a quad tree of depth 8 for a 4000x3000 (iphone camera) image and a hamming distance of 5.  Clearly use these as you will.   
+---
 
-Enjoy - let us know how you get on.  
+## POC Web Service
+
+A Flask web application that lets you encode images into quadtree fingerprints and compare them visually.
+
+### Prerequisites
+
+- Python 3.10+
+- `pip`
+
+### Setup
+
+```bash
+# 1. Navigate to the web service directory
+cd POC/web_service
+
+# 2. Create and activate a virtual environment
+python3 -m venv venv
+source venv/bin/activate       # macOS / Linux
+# venv\Scripts\activate        # Windows
+
+# 3. Install dependencies
+pip install -r requirements.txt
+```
+
+### Running
+
+```bash
+python main.py
+```
+
+Then open [http://localhost:5000](http://localhost:5000) in your browser.
+
+### Optional: Astra DB
+
+The service can store quadtrees in a [DataStax Astra](https://astra.datastax.com) vector database, but this is entirely optional — the app runs fine without it.
+
+To enable it, set these environment variables before starting the server:
+
+```bash
+export ASTRA_DB_API_ENDPOINT="https://your-astra-endpoint"
+export ASTRA_DB_APPLICATION_TOKEN="AstraCS:your-token-here"
+```
+
+Without these, DB Search and DB Management will be unavailable, but Encode, Compare, and Side by Side all work normally.
+
+---
+
+## Using the POC
+
+| Tab | What it does |
+|-----|-------------|
+| **Encode** | Upload an image to generate its quadtree fingerprint. Downloads a `.qt` file and optionally stores it in the DB. |
+| **Side by Side** | Upload two images and compare them directly — no need to generate a quadtree file first. |
+| **Compare** | Upload a `.qt` file from a previous encode alongside a new image to compare them. |
+| **DB Search** | Search the Astra database for images similar to an uploaded one *(requires Astra DB)*. |
+| **DB Management** | List, download, or delete stored quadtrees *(requires Astra DB)*. |
+
+### Suggested starting parameters
+
+| Parameter | Suggested value | Notes |
+|-----------|----------------|-------|
+| Quadtree depth | `8` | Good for ~4000×3000 (iPhone) images; use `5` for quick tests |
+| Threshold (Hamming distance) | `5` | Increase to catch more aggressive edits |
+
+---
+
+## Repository Structure
+
+```
+HOPrS/
+├── POC/
+│   ├── web_service/     # Flask POC application
+│   └── README           # POC-specific notes
+├── examples/            # Early (abandoned) approach using reversible transforms
+└── README.md            # This file
+```
+
+---
+
+## Contributing
+
+Algorithmic efficiency, code quality, and storage optimisation have intentionally not been priorities in the POC — there are straightforward orders-of-magnitude improvements available. Contributions are very welcome.
