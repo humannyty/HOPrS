@@ -1,0 +1,10 @@
+<nav class="nav">
+  <a class="nav-brand" href="/">HO<span>PrS</span></a>
+  <ul class="nav-links">
+    <li><a href="/"           {% if active == 'encode'     %}class="active"{% endif %}>Encode</a></li>
+    <li><a href="/sidebyside" {% if active == 'sidebyside' %}class="active"{% endif %}>Side by Side</a></li>
+    <li><a href="/compare"    {% if active == 'compare'    %}class="active"{% endif %}>Compare</a></li>
+    <li><a href="/search"     {% if active == 'search'     %}class="active"{% endif %}>DB Search</a></li>
+    <li><a href="/quadtrees"  {% if active == 'quadtrees'  %}class="active"{% endif %}>DB Management</a></li>
+  </ul>
+</nav>

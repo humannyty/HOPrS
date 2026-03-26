@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side by Side — HOPrS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% set active = 'sidebyside' %}
+{% include '_nav.html' %}
+
+<div class="page">
+  <div class="page-header">
+    <h1>Side by Side Comparison</h1>
+    <p>Upload two images to compare them directly — no quadtree file needed.</p>
+  </div>
+
+  <div class="card">
+    <form id="sidebyside-form" action="/sidebyside" method="post" enctype="multipart/form-data">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="image1">Image 1 — Reference</label>
+          <input type="file" id="image1" name="image1" required>
+        </div>
+        <div class="form-group">
+          <label for="image2">Image 2 — To Compare</label>
+          <input type="file" id="image2" name="image2" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="threshold">Threshold</label>
+          <input type="number" id="threshold" name="threshold" value="10" required>
+        </div>
+        <div class="form-group">
+          <label for="compare_depth">Compare Depth</label>
+          <input type="number" id="compare_depth" name="compare_depth" value="5" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Compare Images</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
