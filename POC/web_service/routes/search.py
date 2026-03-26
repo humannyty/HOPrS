@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 from utils import (
     QuadTree, mark_as_removed,
     compare_and_output_images, count_black_pixels, create_red_overlay,
-    Matched, hex_to_binary_vector, collection,retrieve_quadtree,
-    mark_as_matched
+    Matched, hex_to_binary_vector, collection, retrieve_quadtree,
+    mark_as_matched, db_available
 )
 from . import search_bp
 
@@ -19,6 +19,8 @@ debug_mode = False
 def search():
     if request.method == 'GET':
         return render_template('search.html')
+    if not db_available:
+        return "Database search is unavailable: Astra DB credentials are not configured.", 503
     else:
         try:
             new_image_file = request.files['new_image']
