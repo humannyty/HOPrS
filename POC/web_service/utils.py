@@ -9,24 +9,31 @@ from PIL import Image
 from enum import Enum
 import imagehash
 import pdqhash
-from astrapy.client import DataAPIClient
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
-# Initialize the client and get a "Database" object
-client = DataAPIClient(os.environ["ASTRA_DB_APPLICATION_TOKEN"])
-database = client.get_database_by_api_endpoint(os.environ["ASTRA_DB_API_ENDPOINT"])
-print(f"Database connected: {database.info().name}\n")
+# Initialize the Astra DB connection only if credentials are available
+collection = None
+db_available = False
 
-try:
-    print("Trying to get the collection")
-    collection = database.get_collection("quadtree_records")
-except astrapy.DataApiException as e:
-    print(f"Exception {e}")
+_token = os.environ.get("ASTRA_DB_APPLICATION_TOKEN")
+_endpoint = os.environ.get("ASTRA_DB_API_ENDPOINT")
 
-print(f"Opened - Collection: {collection.full_name}\n")
+if _token and _endpoint:
+    try:
+        from astrapy.client import DataAPIClient
+        client = DataAPIClient(_token)
+        database = client.get_database_by_api_endpoint(_endpoint)
+        print(f"Database connected: {database.info().name}\n")
+        collection = database.get_collection("quadtree_records")
+        print(f"Opened - Collection: {collection.full_name}\n")
+        db_available = True
+    except Exception as e:
+        print(f"Astra DB connection failed: {e}")
+else:
+    print("Astra DB credentials not set - running without database support.")
 
 
 # Helper function to convert a list of bits to a hexadecimal string
@@ -261,14 +268,18 @@ class QuadTree:
     def write_to_astra_db(self, node:QuadTreeNode=None, level=0, path=''):
         current_app.logger.debug(f"DEPRECATED write_to_astra_db called {path}")
 
+        if not db_available:
+            current_app.logger.debug("Skipping Astra DB write - database not configured.")
+            return
+
         self.append_json_representation(node, level, path)
         current_app.logger.debug(f"len of jsonrepresentation is {len(self.jsonrepresentation)}")
-        
+
         validate_vectors(self.jsonrepresentation)
-        
+
         current_app.logger.debug(f"First item {self.jsonrepresentation[0]}")
         current_app.logger.debug(f"Second item {self.jsonrepresentation[1]}")
-        
+
         try:
             insertion_result = collection.insert_many(self.jsonrepresentation)
             current_app.logger.debug(f"* Inserted {len(insertion_result.inserted_ids)} items.")
